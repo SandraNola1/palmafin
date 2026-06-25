@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Palmafin — Штаб-квартира</title>
+<title>Palmafin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
@@ -19,127 +19,83 @@
   --amber: #fbbf24;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  padding-bottom: 80px;
-  font-size: 15px;
-}
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; padding-bottom: 80px; }
 
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* ШАПКА */
-.header {
-  padding: 16px 18px 12px;
-  border-bottom: 0.5px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
+.header { padding: 16px 18px 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .header h1 { font-size: 18px; font-weight: 600; }
 .header .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
 /* ОСТРОВА */
 .islands { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.island {
-  border-radius: 18px; padding: 16px;
-  border: 1px solid rgba(255,255,255,0.06);
-  cursor: pointer; transition: transform .15s;
-}
+.island { border-radius: 18px; padding: 16px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: transform .15s; }
 .island:active { transform: scale(0.97); }
-.island-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.island-left { display: flex; align-items: center; gap: 10px; }
-.island-emoji { font-size: 24px; }
-.island-name { font-size: 15px; font-weight: 600; }
-.island-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
-.dot.idle { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
-.island-row2 { display: flex; align-items: flex-end; justify-content: space-between; }
-.island-val { font-size: 22px; font-weight: 600; }
-.island-val-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.isl-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.isl-left { display: flex; align-items: center; gap: 10px; }
+.isl-emoji { font-size: 24px; }
+.isl-name { font-size: 15px; font-weight: 600; }
+.isl-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+.dot.idle { background: var(--amber); }
+.isl-row2 { display: flex; align-items: flex-end; justify-content: space-between; }
+.isl-val { font-size: 22px; font-weight: 600; }
+.isl-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .pill { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-.bar { height: 3px; border-radius: 2px; margin-top: 12px; }
+.bar { height: 3px; border-radius: 2px; margin-top: 12px; opacity: 0.6; }
+
 .isl-joy    { background: #1a1200; border-color: #78350f; }
-.isl-joy    .bar { background: #f59e0b; } .isl-joy .pill { background: #451a03; color: #fbbf24; }
+.isl-joy .bar { background: #f59e0b; } .isl-joy .pill { background: #451a03; color: #fbbf24; }
 .isl-blue   { background: #0a1628; border-color: #1e3a5f; }
-.isl-blue   .bar { background: #3b82f6; } .isl-blue .pill { background: #0c1a35; color: #60a5fa; }
+.isl-blue .bar { background: #3b82f6; } .isl-blue .pill { background: #0c1a35; color: #60a5fa; }
 .isl-purple { background: #120a24; border-color: #3b1d6e; }
 .isl-purple .bar { background: #8b5cf6; } .isl-purple .pill { background: #1e0d3e; color: #a78bfa; }
 .isl-green  { background: #04160c; border-color: #064e3b; }
-.isl-green  .bar { background: #10b981; } .isl-green .pill { background: #022c1a; color: #34d399; }
+.isl-green .bar { background: #10b981; } .isl-green .pill { background: #022c1a; color: #34d399; }
 
-/* ДЕТАЛИ */
-.detail-header {
-  padding: 14px 18px; border-bottom: 0.5px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-}
+/* ДЕТАЛИ ОСТРОВА */
+.detail-header { padding: 14px 18px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 12px; }
 .back-btn { font-size: 24px; cursor: pointer; background: none; border: none; color: var(--purple); padding: 0; }
 .detail-title { font-size: 17px; font-weight: 600; }
-.detail-body { padding: 14px; }
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.stat-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px; }
-.stat-card .sv { font-size: 22px; font-weight: 600; }
-.stat-card .sk { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.action-list { display: flex; flex-direction: column; gap: 8px; }
-.action-item {
-  background: var(--bg); border: 0.5px solid var(--border);
-  border-radius: 14px; padding: 14px;
-  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
-}
-.action-item:active { background: var(--bg2); }
-.action-left { display: flex; align-items: center; gap: 12px; }
-.action-icon { font-size: 20px; }
-.action-name { font-size: 14px; font-weight: 500; }
-.action-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-/* =================== ФИНАНСЫ =================== */
-.fin-summary {
-  margin: 14px;
-  background: var(--bg2);
-  border: 0.5px solid var(--border);
-  border-radius: 20px;
-  padding: 18px;
-}
-.fin-summary-top {
-  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;
-}
+.detail-body { padding: 14px; }
+.edit-note { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+.stat-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat-edit-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px; }
+.stat-edit-card label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 6px; }
+.stat-input { width: 100%; background: transparent; border: none; color: var(--text); font-size: 22px; font-weight: 600; outline: none; }
+
+.memo-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.memo-area { width: 100%; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px; color: var(--text); font-size: 14px; outline: none; resize: none; font-family: inherit; line-height: 1.5; min-height: 100px; }
+.memo-area:focus { border-color: var(--purple); }
+
+.save-btn { width: 100%; padding: 14px; border-radius: 14px; background: #4c1d95; border: none; color: white; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 14px; }
+.save-btn:active { background: #3b1575; }
+
+/* ФИНАНСЫ */
+.fin-summary { margin: 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 20px; padding: 18px; }
 .fin-label { font-size: 12px; color: var(--purple); margin-bottom: 6px; }
 .fin-net { font-size: 30px; font-weight: 700; }
-.fin-period { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-.fin-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fin-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
 .fin-card { background: var(--bg3); border-radius: 12px; padding: 12px; }
-.fin-card .fc-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-.fin-card .fc-val { font-size: 18px; font-weight: 600; }
+.fc-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.fc-val { font-size: 18px; font-weight: 600; }
 .fc-inc .fc-val { color: var(--green); }
 .fc-exp .fc-val { color: var(--red); }
 
-/* Табы */
 .tabs { display: flex; margin: 0 14px 12px; background: var(--bg3); border-radius: 12px; padding: 3px; }
 .tab { flex: 1; text-align: center; padding: 8px; font-size: 12px; color: var(--muted); border-radius: 10px; cursor: pointer; }
 .tab.active { background: var(--bg2); color: var(--purple); }
 
-/* Категории */
 .cat-scroll { display: flex; gap: 8px; padding: 0 14px 12px; overflow-x: auto; scrollbar-width: none; }
 .cat-scroll::-webkit-scrollbar { display: none; }
-.cat-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 6px 12px; border-radius: 20px; white-space: nowrap;
-  font-size: 12px; cursor: pointer;
-  background: var(--bg2); border: 0.5px solid var(--border); color: var(--muted);
-  transition: all .15s;
-}
+.cat-chip { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; font-size: 12px; cursor: pointer; background: var(--bg2); border: 0.5px solid var(--border); color: var(--muted); }
 .cat-chip.active { color: var(--text); border-color: var(--purple); background: #1e1535; }
-.cat-chip .ce { font-size: 14px; }
 
-/* Список транзакций */
 .txn-list { padding: 0 14px; display: flex; flex-direction: column; gap: 8px; }
-.txn {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--bg); border: 0.5px solid var(--border);
-  border-radius: 14px; padding: 12px 16px;
-}
+.txn { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 0.5px solid var(--border); border-radius: 14px; padding: 12px 16px; }
 .txn-left { display: flex; align-items: center; gap: 12px; }
 .txn-icon { font-size: 22px; }
 .txn-name { font-size: 14px; }
@@ -150,198 +106,136 @@ body {
 .txn-amt.income { color: var(--green); }
 .txn-amt.expense { color: var(--red); }
 
-.add-fab {
-  position: fixed; bottom: 90px; right: 18px;
-  width: 54px; height: 54px; border-radius: 50%;
-  background: #4c1d95; border: none; color: white; font-size: 28px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(109,40,217,0.5); z-index: 50;
-}
+.add-fab { position: fixed; bottom: 90px; right: 18px; width: 54px; height: 54px; border-radius: 50%; background: #4c1d95; border: none; color: white; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(109,40,217,0.5); z-index: 50; }
 
-/* =================== ФОРМА =================== */
-.form-screen { padding: 14px; }
+/* ФОРМА */
+.form-wrap { padding: 14px; }
 .form-section { margin-bottom: 18px; }
 .form-section-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-
-/* Тип */
 .type-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.type-btn {
-  padding: 14px; border-radius: 14px;
-  border: 0.5px solid var(--border); background: var(--bg2);
-  color: var(--muted); font-size: 14px; cursor: pointer; text-align: center; transition: all .15s;
-}
-.type-btn.sel-income  { border-color: var(--green);  color: var(--green);  background: #022c1a; }
-.type-btn.sel-expense { border-color: var(--red);    color: var(--red);    background: #350a0a; }
+.type-btn { padding: 14px; border-radius: 14px; border: 0.5px solid var(--border); background: var(--bg2); color: var(--muted); font-size: 14px; cursor: pointer; text-align: center; }
+.type-btn.sel-income  { border-color: var(--green); color: var(--green); background: #022c1a; }
+.type-btn.sel-expense { border-color: var(--red);   color: var(--red);   background: #350a0a; }
 
-/* Калькулятор */
-.calc-display {
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: 14px; padding: 16px 18px;
-  margin-bottom: 10px; text-align: right;
-}
+.calc-display { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 10px; text-align: right; }
 .calc-expr { font-size: 13px; color: var(--muted); min-height: 18px; }
-.calc-result { font-size: 32px; font-weight: 600; margin-top: 4px; }
-
+.calc-result { font-size: 32px; font-weight: 600; }
 .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.calc-btn {
-  padding: 16px 8px; border-radius: 12px;
-  background: var(--bg2); border: 0.5px solid var(--border);
-  color: var(--text); font-size: 18px; cursor: pointer; text-align: center;
-  transition: background .1s;
-}
+.calc-btn { padding: 16px 8px; border-radius: 12px; background: var(--bg2); border: 0.5px solid var(--border); color: var(--text); font-size: 18px; cursor: pointer; text-align: center; }
 .calc-btn:active { background: #1e1535; }
 .calc-btn.op  { color: var(--purple); }
 .calc-btn.del { color: var(--red); }
-.calc-btn.eq  { background: #4c1d95; border-color: #6d28d9; color: white; }
+.calc-btn.eq  { background: #4c1d95; border-color: #6d28d9; color: white; grid-column: span 4; }
 .calc-btn.zero { grid-column: span 2; }
 
-/* Заметка */
-.note-input {
-  width: 100%; background: var(--bg2);
-  border: 0.5px solid var(--border); border-radius: 14px;
-  padding: 14px 16px; color: var(--text); font-size: 15px;
-  outline: none; resize: none; font-family: inherit;
-}
-.note-input:focus { border-color: var(--purple); }
-
-/* Категории в форме */
 .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.cat-item {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 12px 6px; border-radius: 14px;
-  background: var(--bg2); border: 0.5px solid var(--border);
-  cursor: pointer; transition: all .15s;
-}
+.cat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border-radius: 14px; background: var(--bg2); border: 0.5px solid var(--border); cursor: pointer; }
 .cat-item:active { transform: scale(0.96); }
 .cat-item.selected { border-color: var(--purple); background: #1e1535; }
-.cat-item .ci-emoji { font-size: 22px; }
-.cat-item .ci-name { font-size: 11px; color: var(--muted); text-align: center; }
-.cat-item.selected .ci-name { color: var(--purple); }
+.cat-item .ci-e { font-size: 22px; }
+.cat-item .ci-n { font-size: 11px; color: var(--muted); text-align: center; }
+.cat-item.selected .ci-n { color: var(--purple); }
 
-/* Проект */
-.proj-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.proj-btn {
-  padding: 10px; border-radius: 12px;
-  border: 0.5px solid var(--border); background: var(--bg2);
-  color: var(--muted); font-size: 12px; cursor: pointer; text-align: center;
-}
-.proj-btn.selected { border-color: var(--purple); color: var(--text); background: #1e1535; }
-
-.submit-btn {
-  width: 100%; padding: 16px; border-radius: 16px;
-  background: #4c1d95; border: none; color: white;
-  font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px;
-}
+.note-input { width: 100%; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px 16px; color: var(--text); font-size: 15px; outline: none; resize: none; font-family: inherit; }
+.note-input:focus { border-color: var(--purple); }
+.submit-btn { width: 100%; padding: 16px; border-radius: 16px; background: #4c1d95; border: none; color: white; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; }
 .submit-btn:active { background: #3b1575; }
 
-/* НАВИГАЦИЯ */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg3); border-top: 0.5px solid var(--border);
-  display: flex; padding: 10px 0 16px; z-index: 100;
-}
-.nav-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; gap: 3px; cursor: pointer;
-  font-size: 10px; color: var(--muted);
-}
+/* ЗАМЕТКИ */
+.notes-list { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.note-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; cursor: pointer; }
+.note-card:active { background: #1e1535; }
+.note-card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.note-card-preview { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.note-card-date { font-size: 11px; color: #4b5563; margin-top: 8px; }
+.note-add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 14px; padding: 14px; border-radius: 16px; background: var(--bg2); border: 0.5px dashed var(--border); color: var(--purple); font-size: 14px; cursor: pointer; }
+
+.note-editor-header { padding: 14px 18px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.note-editor-left { display: flex; align-items: center; gap: 12px; }
+.note-del-btn { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; }
+.note-title-input { width: 100%; background: transparent; border: none; border-bottom: 0.5px solid var(--border); color: var(--text); font-size: 17px; font-weight: 600; outline: none; padding: 14px 18px; }
+.note-body-input { width: 100%; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; resize: none; font-family: inherit; line-height: 1.6; padding: 14px 18px; min-height: 300px; }
+
+/* NAV */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg3); border-top: 0.5px solid var(--border); display: flex; padding: 10px 0 16px; z-index: 100; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-size: 10px; color: var(--muted); }
 .nav-item.active { color: var(--purple); }
 .nav-icon { font-size: 22px; }
 </style>
 </head>
 <body>
 
-<!-- ГЛАВНЫЙ ЭКРАН -->
+<!-- ГЛАВНАЯ -->
 <div class="screen active" id="screen-home">
   <div class="header">
-    <div><h1>Штаб-квартира</h1><div class="sub" id="agent-count">Загружаем...</div></div>
+    <div><h1>Штаб-квартира</h1><div class="sub">4 острова · нажми чтобы обновить</div></div>
     <span style="font-size:24px">🧠</span>
   </div>
-  <div class="islands" id="islands-container">
-    <div style="text-align:center;padding:40px;color:#6b7280">Загрузка...</div>
-  </div>
+  <div class="islands" id="islands-wrap"></div>
 </div>
 
-<!-- ДЕТАЛИ АГЕНТА -->
-<div class="screen" id="screen-detail">
+<!-- ДЕТАЛИ ОСТРОВА -->
+<div class="screen" id="screen-island">
   <div class="detail-header">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div class="detail-title" id="d-title"></div>
+    <button class="back-btn" id="island-back">←</button>
+    <div class="detail-title" id="island-title"></div>
   </div>
-  <div class="detail-body" id="d-body"></div>
+  <div class="detail-body">
+    <div class="edit-note">✏️ Редактируй цифры вручную — сохраняются на телефоне</div>
+    <div class="stat-edit-grid" id="island-stats"></div>
+    <div class="memo-label">Заметка</div>
+    <textarea class="memo-area" id="island-memo" placeholder="Планы, идеи, проблемы..."></textarea>
+    <button class="save-btn" id="island-save">Сохранить</button>
+  </div>
 </div>
 
 <!-- ФИНАНСЫ -->
 <div class="screen" id="screen-finance">
-  <div class="header">
-    <div><h1>Финансы</h1><div class="sub">Все проекты и личные</div></div>
-    <span style="font-size:24px">💰</span>
-  </div>
-
+  <div class="header"><div><h1>Финансы</h1><div class="sub">Все проекты и личное</div></div><span style="font-size:24px">💰</span></div>
   <div class="fin-summary">
-    <div class="fin-label">Чистый доход · <span id="fin-month">месяц</span></div>
-    <div class="fin-net" id="fin-net">—</div>
-    <div class="fin-period">Текущий месяц</div>
-    <div class="fin-cards" style="margin-top:14px">
-      <div class="fin-card fc-inc">
-        <div class="fc-label">Доходы</div>
-        <div class="fc-val" id="fin-inc">—</div>
-      </div>
-      <div class="fin-card fc-exp">
-        <div class="fc-label">Расходы</div>
-        <div class="fc-val" id="fin-exp">—</div>
-      </div>
+    <div class="fin-label">Чистый доход · <span id="fin-month"></span></div>
+    <div class="fin-net" id="fin-net">0 ₽</div>
+    <div class="fin-cards">
+      <div class="fin-card fc-inc"><div class="fc-label">Доходы</div><div class="fc-val" id="fin-inc">0 ₽</div></div>
+      <div class="fin-card fc-exp"><div class="fc-label">Расходы</div><div class="fc-val" id="fin-exp">0 ₽</div></div>
     </div>
   </div>
-
-  <!-- Табы -->
   <div class="tabs">
-    <div class="tab active" onclick="filterTab('all',this)">Всё</div>
-    <div class="tab" onclick="filterTab('income',this)">Доходы</div>
-    <div class="tab" onclick="filterTab('expense',this)">Расходы</div>
+    <div class="tab active" data-filter="all">Всё</div>
+    <div class="tab" data-filter="income">Доходы</div>
+    <div class="tab" data-filter="expense">Расходы</div>
   </div>
-
-  <!-- Категории -->
   <div class="cat-scroll" id="cat-filter">
-    <div class="cat-chip active" data-cat="all" onclick="filterCat('all',this)"><span class="ce">📋</span> Все</div>
-    <div class="cat-chip" data-cat="Стройка" onclick="filterCat('Стройка',this)"><span class="ce">🏗</span> Стройка</div>
-    <div class="cat-chip" data-cat="Продукты" onclick="filterCat('Продукты',this)"><span class="ce">🛒</span> Продукты</div>
-    <div class="cat-chip" data-cat="Развлечения" onclick="filterCat('Развлечения',this)"><span class="ce">🎉</span> Развлечения</div>
-    <div class="cat-chip" data-cat="Транспорт" onclick="filterCat('Транспорт',this)"><span class="ce">🚗</span> Транспорт</div>
-    <div class="cat-chip" data-cat="Кафе" onclick="filterCat('Кафе',this)"><span class="ce">☕</span> Кафе</div>
-    <div class="cat-chip" data-cat="Здоровье" onclick="filterCat('Здоровье',this)"><span class="ce">💊</span> Здоровье</div>
-    <div class="cat-chip" data-cat="Одежда" onclick="filterCat('Одежда',this)"><span class="ce">👕</span> Одежда</div>
-    <div class="cat-chip" data-cat="Сервисы" onclick="filterCat('Сервисы',this)"><span class="ce">☁️</span> Сервисы</div>
-    <div class="cat-chip" data-cat="Проекты" onclick="filterCat('Проекты',this)"><span class="ce">💼</span> Проекты</div>
-    <div class="cat-chip" data-cat="Другое" onclick="filterCat('Другое',this)"><span class="ce">📦</span> Другое</div>
+    <div class="cat-chip active" data-cat="all">📋 Все</div>
+    <div class="cat-chip" data-cat="Стройка">🏗 Стройка</div>
+    <div class="cat-chip" data-cat="Продукты">🛒 Продукты</div>
+    <div class="cat-chip" data-cat="Развлечения">🎉 Развлечения</div>
+    <div class="cat-chip" data-cat="Транспорт">🚗 Транспорт</div>
+    <div class="cat-chip" data-cat="Кафе">☕ Кафе</div>
+    <div class="cat-chip" data-cat="Здоровье">💊 Здоровье</div>
+    <div class="cat-chip" data-cat="Одежда">👕 Одежда</div>
+    <div class="cat-chip" data-cat="Сервисы">☁️ Сервисы</div>
+    <div class="cat-chip" data-cat="Проекты">💼 Проекты</div>
+    <div class="cat-chip" data-cat="Другое">📦 Другое</div>
   </div>
-
-  <div class="txn-list" id="txn-list">
-    <div style="text-align:center;padding:30px;color:#6b7280">Загрузка...</div>
-  </div>
-
-  <button class="add-fab" onclick="showAddForm()">+</button>
-  <div style="height:20px"></div>
+  <div class="txn-list" id="txn-list"></div>
+  <button class="add-fab" id="add-txn-btn">+</button>
 </div>
 
-<!-- ФОРМА ДОБАВЛЕНИЯ -->
+<!-- ФОРМА ТРАНЗАКЦИИ -->
 <div class="screen" id="screen-add">
   <div class="detail-header">
-    <button class="back-btn" onclick="showScreen('finance');loadFinance()">←</button>
+    <button class="back-btn" id="add-back">←</button>
     <div class="detail-title">Новая запись</div>
   </div>
-  <div class="form-screen">
-
-    <!-- Тип -->
+  <div class="form-wrap">
     <div class="form-section">
       <div class="form-section-title">Тип</div>
       <div class="type-row">
-        <div class="type-btn sel-income" id="btn-income" onclick="setType('income')">+ Доход</div>
-        <div class="type-btn" id="btn-expense" onclick="setType('expense')">− Расход</div>
+        <div class="type-btn sel-expense" id="btn-expense">− Расход</div>
+        <div class="type-btn" id="btn-income">+ Доход</div>
       </div>
     </div>
-
-    <!-- Калькулятор -->
     <div class="form-section">
       <div class="form-section-title">Сумма</div>
       <div class="calc-display">
@@ -349,357 +243,343 @@ body {
         <div class="calc-result" id="calc-result">0</div>
       </div>
       <div class="calc-grid">
-        <div class="calc-btn" onclick="calcPress('7')">7</div>
-        <div class="calc-btn" onclick="calcPress('8')">8</div>
-        <div class="calc-btn" onclick="calcPress('9')">9</div>
-        <div class="calc-btn op" onclick="calcPress('÷')">÷</div>
-        <div class="calc-btn" onclick="calcPress('4')">4</div>
-        <div class="calc-btn" onclick="calcPress('5')">5</div>
-        <div class="calc-btn" onclick="calcPress('6')">6</div>
-        <div class="calc-btn op" onclick="calcPress('×')">×</div>
-        <div class="calc-btn" onclick="calcPress('1')">1</div>
-        <div class="calc-btn" onclick="calcPress('2')">2</div>
-        <div class="calc-btn" onclick="calcPress('3')">3</div>
-        <div class="calc-btn op" onclick="calcPress('−')">−</div>
-        <div class="calc-btn zero" onclick="calcPress('0')">0</div>
-        <div class="calc-btn" onclick="calcPress('.')">.</div>
-        <div class="calc-btn op" onclick="calcPress('+')">+</div>
-        <div class="calc-btn del" onclick="calcDel()">⌫</div>
-        <div class="calc-btn eq" style="grid-column:span 4" onclick="calcEqual()">=</div>
+        <div class="calc-btn" data-v="7">7</div><div class="calc-btn" data-v="8">8</div><div class="calc-btn" data-v="9">9</div><div class="calc-btn op" data-v="÷">÷</div>
+        <div class="calc-btn" data-v="4">4</div><div class="calc-btn" data-v="5">5</div><div class="calc-btn" data-v="6">6</div><div class="calc-btn op" data-v="×">×</div>
+        <div class="calc-btn" data-v="1">1</div><div class="calc-btn" data-v="2">2</div><div class="calc-btn" data-v="3">3</div><div class="calc-btn op" data-v="−">−</div>
+        <div class="calc-btn zero" data-v="0">0</div><div class="calc-btn" data-v=".">.</div><div class="calc-btn op" data-v="+">+</div><div class="calc-btn del" id="calc-del">⌫</div>
+        <div class="calc-btn eq" id="calc-eq">=</div>
       </div>
     </div>
-
-    <!-- Категория -->
     <div class="form-section">
       <div class="form-section-title">Категория</div>
       <div class="cat-grid" id="cat-picker">
-        <div class="cat-item" data-cat="Стройка"    onclick="pickCat(this)"><span class="ci-emoji">🏗</span><span class="ci-name">Стройка</span></div>
-        <div class="cat-item" data-cat="Продукты"   onclick="pickCat(this)"><span class="ci-emoji">🛒</span><span class="ci-name">Продукты</span></div>
-        <div class="cat-item" data-cat="Развлечения" onclick="pickCat(this)"><span class="ci-emoji">🎉</span><span class="ci-name">Развлечения</span></div>
-        <div class="cat-item" data-cat="Транспорт"  onclick="pickCat(this)"><span class="ci-emoji">🚗</span><span class="ci-name">Транспорт</span></div>
-        <div class="cat-item" data-cat="Кафе"       onclick="pickCat(this)"><span class="ci-emoji">☕</span><span class="ci-name">Кафе</span></div>
-        <div class="cat-item" data-cat="Здоровье"   onclick="pickCat(this)"><span class="ci-emoji">💊</span><span class="ci-name">Здоровье</span></div>
-        <div class="cat-item" data-cat="Одежда"     onclick="pickCat(this)"><span class="ci-emoji">👕</span><span class="ci-name">Одежда</span></div>
-        <div class="cat-item" data-cat="Сервисы"    onclick="pickCat(this)"><span class="ci-emoji">☁️</span><span class="ci-name">Сервисы</span></div>
-        <div class="cat-item" data-cat="Проекты"    onclick="pickCat(this)"><span class="ci-emoji">💼</span><span class="ci-name">Проекты</span></div>
-        <div class="cat-item" data-cat="Другое"     onclick="pickCat(this)"><span class="ci-emoji">📦</span><span class="ci-name">Другое</span></div>
+        <div class="cat-item" data-cat="Стройка"><span class="ci-e">🏗</span><span class="ci-n">Стройка</span></div>
+        <div class="cat-item" data-cat="Продукты"><span class="ci-e">🛒</span><span class="ci-n">Продукты</span></div>
+        <div class="cat-item" data-cat="Развлечения"><span class="ci-e">🎉</span><span class="ci-n">Развлечения</span></div>
+        <div class="cat-item" data-cat="Транспорт"><span class="ci-e">🚗</span><span class="ci-n">Транспорт</span></div>
+        <div class="cat-item" data-cat="Кафе"><span class="ci-e">☕</span><span class="ci-n">Кафе</span></div>
+        <div class="cat-item" data-cat="Здоровье"><span class="ci-e">💊</span><span class="ci-n">Здоровье</span></div>
+        <div class="cat-item" data-cat="Одежда"><span class="ci-e">👕</span><span class="ci-n">Одежда</span></div>
+        <div class="cat-item" data-cat="Сервисы"><span class="ci-e">☁️</span><span class="ci-n">Сервисы</span></div>
+        <div class="cat-item" data-cat="Проекты"><span class="ci-e">💼</span><span class="ci-n">Проекты</span></div>
+        <div class="cat-item" data-cat="Другое"><span class="ci-e">📦</span><span class="ci-n">Другое</span></div>
       </div>
     </div>
-
-    <!-- Заметка -->
     <div class="form-section">
       <div class="form-section-title">Заметка</div>
-      <textarea class="note-input" id="f-note" rows="2" placeholder="Что за расход? (необязательно)"></textarea>
+      <textarea class="note-input" id="f-note" rows="2" placeholder="За что платил?"></textarea>
     </div>
-
-    <!-- Проект -->
-    <div class="form-section">
-      <div class="form-section-title">Привязать к проекту</div>
-      <div class="proj-row">
-        <div class="proj-btn" data-proj="" onclick="pickProj(this)">— Личное</div>
-        <div class="proj-btn" data-proj="garant" onclick="pickProj(this)">🤝 Garant</div>
-        <div class="proj-btn" data-proj="vpn" onclick="pickProj(this)">🔒 Nord1x</div>
-        <div class="proj-btn" data-proj="moon" onclick="pickProj(this)">🌙 Мун бот</div>
-        <div class="proj-btn" data-proj="content" onclick="pickProj(this)">🎬 RelContent</div>
-        <div class="proj-btn" data-proj="other" onclick="pickProj(this)">📦 Другое</div>
-      </div>
-    </div>
-
-    <button class="submit-btn" onclick="submitTxn()">Сохранить</button>
+    <button class="submit-btn" id="submit-txn">Сохранить</button>
   </div>
 </div>
 
-<!-- НАВИГАЦИЯ -->
+<!-- ЗАМЕТКИ -->
+<div class="screen" id="screen-notes">
+  <div class="header"><div><h1>Заметки</h1><div class="sub">Идеи, планы, наблюдения</div></div><span style="font-size:24px">📝</span></div>
+  <div style="height:14px"></div>
+  <div class="note-add-btn" id="new-note-btn">+ Новая заметка</div>
+  <div class="notes-list" id="notes-list"></div>
+</div>
+
+<!-- РЕДАКТОР ЗАМЕТКИ -->
+<div class="screen" id="screen-note-edit">
+  <div class="note-editor-header">
+    <div class="note-editor-left">
+      <button class="back-btn" id="note-back">←</button>
+      <button class="save-btn" style="width:auto;padding:8px 16px;margin:0;font-size:13px" id="note-save">Сохранить</button>
+    </div>
+    <button class="note-del-btn" id="note-del">🗑</button>
+  </div>
+  <input class="note-title-input" id="note-title" placeholder="Заголовок...">
+  <textarea class="note-body-input" id="note-body" placeholder="Пиши что угодно..."></textarea>
+</div>
+
+<!-- NAV -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-home" onclick="switchNav('home')">
-    <span class="nav-icon">🏠</span><span>Штаб</span>
-  </div>
-  <div class="nav-item" id="nav-finance" onclick="switchNav('finance')">
-    <span class="nav-icon">📊</span><span>Финансы</span>
-  </div>
-  <div class="nav-item" id="nav-alerts" onclick="switchNav('home')">
-    <span class="nav-icon">🔔</span><span>Алерты</span>
-  </div>
-  <div class="nav-item" id="nav-settings" onclick="switchNav('home')">
-    <span class="nav-icon">⚙️</span><span>Настройки</span>
-  </div>
+  <div class="nav-item active" data-screen="home"><span class="nav-icon">🏠</span><span>Штаб</span></div>
+  <div class="nav-item" data-screen="finance"><span class="nav-icon">📊</span><span>Финансы</span></div>
+  <div class="nav-item" data-screen="notes"><span class="nav-icon">📝</span><span>Заметки</span></div>
 </nav>
 
 <script>
-const API = window.location.origin;
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-let allTxns = [];
-let activeTxnType = 'all';
-let activeCat = 'all';
-let txnType = 'income';
-let selCat = '';
-let selProj = '';
-let calcExpr = '';
-let calcVal = '0';
-
-const catIcons = {
-  'Стройка':'🏗','Продукты':'🛒','Развлечения':'🎉','Транспорт':'🚗',
-  'Кафе':'☕','Здоровье':'💊','Одежда':'👕','Сервисы':'☁️',
-  'Проекты':'💼','Другое':'📦'
+// ── ХРАНИЛИЩЕ ──
+const S = {
+  get: k => JSON.parse(localStorage.getItem('pf_'+k) || 'null'),
+  set: (k,v) => localStorage.setItem('pf_'+k, JSON.stringify(v)),
 };
-const projIcons = { garant:'🤝', vpn:'🔒', moon:'🌙', content:'🎬', other:'📦' };
 
-// ============ КАЛЬКУЛЯТОР ============
-function calcPress(v) {
-  const ops = ['÷','×','−','+'];
-  if (ops.includes(v)) {
-    calcExpr += ' ' + calcVal + ' ' + v;
-    calcVal = '';
-  } else if (v === '.') {
-    if (!calcVal.includes('.')) calcVal += '.';
-  } else {
-    if (calcVal === '0') calcVal = v;
-    else calcVal += v;
-  }
-  updateCalcDisplay();
-}
+// ── ОСТРОВА ──
+const ISLANDS = [
+  { id:'garant',  name:'Architect Garant', sub:'Остров Сделок',    emoji:'🤝', emotion:'Радость', cls:'isl-joy',    bar:70,
+    fields:[{key:'active_deals',label:'Активных сделок'},{key:'weekly_usdt',label:'USDT за неделю'},{key:'arbitrage',label:'Арбитражей'},{key:'total_deals',label:'Всего сделок'}] },
+  { id:'vpn',     name:'Nord1x VPN',       sub:'Остров Защиты',    emoji:'🔒', emotion:'Рост',    cls:'isl-blue',   bar:55,
+    fields:[{key:'active_subs',label:'Активных подписок'},{key:'monthly_rub',label:'₽ за месяц'},{key:'new_today',label:'Новых сегодня'},{key:'expiring',label:'Истекают'}] },
+  { id:'moon',    name:'Мун бот',          sub:'Остров Тайны',     emoji:'🌙', emotion:'Вера',    cls:'isl-purple', bar:30,
+    fields:[{key:'users',label:'Пользователей'},{key:'readings',label:'Раскладов/день'},{key:'paid',label:'Платных'},{key:'rating',label:'Рейтинг'}] },
+  { id:'content', name:'RelContent',       sub:'Остров Творчества', emoji:'🎬', emotion:'Вкус',   cls:'isl-green',  bar:85,
+    fields:[{key:'reach',label:'Охват/неделя'},{key:'reels',label:'Reels'},{key:'subs',label:'Подписчиков'},{key:'pending',label:'Ждут одобрения'}] },
+];
 
-function calcDel() {
-  if (calcVal.length > 1) calcVal = calcVal.slice(0,-1);
-  else { calcVal = '0'; }
-  updateCalcDisplay();
-}
+function getIslandData(id) { return S.get('island_'+id) || {}; }
+function saveIslandData(id, data) { S.set('island_'+id, data); }
 
-function calcEqual() {
-  try {
-    const expr = (calcExpr + ' ' + calcVal)
-      .replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').trim();
-    const result = Function('"use strict"; return (' + expr + ')')();
-    calcVal = String(Math.round(result * 100) / 100);
-    calcExpr = '';
-  } catch(e) { calcExpr = ''; }
-  updateCalcDisplay();
-}
-
-function updateCalcDisplay() {
-  document.getElementById('calc-expr').textContent = calcExpr;
-  document.getElementById('calc-result').textContent =
-    parseFloat(calcVal || '0').toLocaleString('ru');
-}
-
-// ============ ФОРМА ============
-function setType(t) {
-  txnType = t;
-  document.getElementById('btn-income').className = 'type-btn' + (t==='income'?' sel-income':'');
-  document.getElementById('btn-expense').className = 'type-btn' + (t==='expense'?' sel-expense':'');
-}
-
-function pickCat(el) {
-  document.querySelectorAll('.cat-item').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  selCat = el.dataset.cat;
-}
-
-function pickProj(el) {
-  document.querySelectorAll('.proj-btn').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected');
-  selProj = el.dataset.proj;
-}
-
-function showAddForm() {
-  calcExpr = ''; calcVal = '0'; selCat = ''; selProj = '';
-  document.getElementById('f-note').value = '';
-  document.querySelectorAll('.cat-item').forEach(c=>c.classList.remove('selected'));
-  document.querySelectorAll('.proj-btn').forEach(b=>b.classList.remove('selected'));
-  setType('expense');
-  updateCalcDisplay();
-  showScreen('add');
-}
-
-function submitTxn() {
-  const raw = calcExpr + ' ' + calcVal;
-  let amount;
-  try {
-    amount = parseFloat(Function('"use strict"; return (' +
-      raw.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-') + ')')());
-  } catch(e) { amount = 0; }
-  if (!amount || amount <= 0) { alert('Введи сумму через калькулятор'); return; }
-  if (!selCat) { alert('Выбери категорию'); return; }
-  const txn = {
-    id: Date.now(),
-    type: txnType,
-    amount,
-    currency: 'RUB',
-    category: selCat,
-    project: selProj || null,
-    note: document.getElementById('f-note').value || null,
-    created_at: new Date().toISOString()
-  };
-  const txns = JSON.parse(localStorage.getItem('palmafin_txns') || '[]');
-  txns.unshift(txn);
-  localStorage.setItem('palmafin_txns', JSON.stringify(txns));
-  showScreen('finance');
-  loadFinance();
-}
-
-// ============ ФИНАНСЫ ============
-function loadFinance() {
-  allTxns = JSON.parse(localStorage.getItem('palmafin_txns') || '[]');
-  const now = new Date();
-  const month = now.getMonth(); const year = now.getFullYear();
-  const thisMonth = allTxns.filter(t => {
-    const d = new Date(t.created_at);
-    return d.getMonth()===month && d.getFullYear()===year;
-  });
-  const income  = thisMonth.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const expense = thisMonth.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  const net = income - expense;
-  const monthName = now.toLocaleDateString('ru',{month:'long',year:'numeric'});
-  document.getElementById('fin-month').textContent = monthName;
-  document.getElementById('fin-net').textContent = (net>=0?'+':'') + fmt(net) + ' ₽';
-  document.getElementById('fin-net').style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
-  document.getElementById('fin-inc').textContent = '+' + fmt(income) + ' ₽';
-  document.getElementById('fin-exp').textContent = '−' + fmt(expense) + ' ₽';
-  applyFilters();
-}
-
-function fmt(n) { return Math.round(n||0).toLocaleString('ru'); }
-
-function applyFilters() {
-  let list = [...allTxns];
-  if (activeTxnType !== 'all') list = list.filter(t=>t.type===activeTxnType);
-  if (activeCat !== 'all') list = list.filter(t=>t.category===activeCat);
-  renderTxns(list);
-}
-
-function filterTab(type, el) {
-  activeTxnType = type;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  applyFilters();
-}
-
-function filterCat(cat, el) {
-  activeCat = cat;
-  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  applyFilters();
-}
-
-function renderTxns(txns) {
-  document.getElementById('txn-list').innerHTML = txns.length ? txns.map(t => {
-    const icon = catIcons[t.category] || projIcons[t.project] || '💳';
-    const name = t.note || t.category || 'Транзакция';
-    const date = t.created_at ? new Date(t.created_at).toLocaleDateString('ru',{day:'numeric',month:'short'}) : '—';
-    const sign = t.type==='income'?'+':'−';
-    return `<div class="txn">
-      <div class="txn-left">
-        <span class="txn-icon">${icon}</span>
-        <div>
-          <div class="txn-name">${name}</div>
-          <div class="txn-date">${date}${t.project ? ' · ' + (projIcons[t.project]||'') : ''}</div>
+function renderIslands() {
+  const wrap = document.getElementById('islands-wrap');
+  wrap.innerHTML = ISLANDS.map(isl => {
+    const data = getIslandData(isl.id);
+    const firstVal = data[isl.fields[0].key] || '—';
+    const firstLabel = isl.fields[0].label;
+    return `<div class="island ${isl.cls}" data-id="${isl.id}">
+      <div class="isl-row1">
+        <div class="isl-left">
+          <span class="isl-emoji">${isl.emoji}</span>
+          <div><div class="isl-name">${isl.name}</div><div class="isl-sub">${isl.sub}</div></div>
         </div>
+        <div class="dot"></div>
+      </div>
+      <div class="isl-row2">
+        <div><div class="isl-val">${firstVal}</div><div class="isl-label">${firstLabel}</div></div>
+        <span class="pill">${isl.emotion}</span>
+      </div>
+      <div class="bar" style="width:${isl.bar}%"></div>
+    </div>`;
+  }).join('');
+  wrap.addEventListener('click', e => {
+    const el = e.target.closest('.island');
+    if (el) openIsland(el.dataset.id);
+  });
+}
+
+let currentIslandId = null;
+function openIsland(id) {
+  currentIslandId = id;
+  const isl = ISLANDS.find(i=>i.id===id);
+  const data = getIslandData(id);
+  document.getElementById('island-title').textContent = isl.emoji + ' ' + isl.name;
+  document.getElementById('island-stats').innerHTML = isl.fields.map(f =>
+    `<div class="stat-edit-card">
+      <label>${f.label}</label>
+      <input class="stat-input" data-key="${f.key}" value="${data[f.key]||''}" placeholder="0" type="text" inputmode="decimal">
+    </div>`
+  ).join('');
+  document.getElementById('island-memo').value = data._memo || '';
+  showScreen('island');
+}
+
+document.getElementById('island-back').addEventListener('click', () => { showScreen('home'); renderIslands(); });
+document.getElementById('island-save').addEventListener('click', () => {
+  const data = getIslandData(currentIslandId);
+  document.querySelectorAll('.stat-input').forEach(inp => { data[inp.dataset.key] = inp.value; });
+  data._memo = document.getElementById('island-memo').value;
+  saveIslandData(currentIslandId, data);
+  showScreen('home');
+  renderIslands();
+});
+
+// ── ФИНАНСЫ ──
+let txnType = 'expense', selCat = '', calcExpr = '', calcVal = '0';
+const catIcons = {'Стройка':'🏗','Продукты':'🛒','Развлечения':'🎉','Транспорт':'🚗','Кафе':'☕','Здоровье':'💊','Одежда':'👕','Сервисы':'☁️','Проекты':'💼','Другое':'📦'};
+
+function loadFinance() {
+  const txns = S.get('txns') || [];
+  const now = new Date(); const m = now.getMonth(); const y = now.getFullYear();
+  const month = txns.filter(t => { const d=new Date(t.ts); return d.getMonth()===m && d.getFullYear()===y; });
+  const inc = month.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp = month.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net = inc - exp;
+  document.getElementById('fin-month').textContent = now.toLocaleDateString('ru',{month:'long',year:'numeric'});
+  document.getElementById('fin-net').textContent = (net>=0?'+':'') + fmt(net) + ' ₽';
+  document.getElementById('fin-net').style.color = net>=0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('fin-inc').textContent = '+' + fmt(inc) + ' ₽';
+  document.getElementById('fin-exp').textContent = '−' + fmt(exp) + ' ₽';
+  renderTxns(txns);
+}
+
+let activeTab = 'all', activeCat = 'all';
+function renderTxns(txns) {
+  let list = [...txns];
+  if (activeTab !== 'all') list = list.filter(t=>t.type===activeTab);
+  if (activeCat !== 'all') list = list.filter(t=>t.cat===activeCat);
+  document.getElementById('txn-list').innerHTML = list.length ? list.map(t => {
+    const icon = catIcons[t.cat] || '💳';
+    const date = new Date(t.ts).toLocaleDateString('ru',{day:'numeric',month:'short'});
+    return `<div class="txn">
+      <div class="txn-left"><span class="txn-icon">${icon}</span>
+        <div><div class="txn-name">${t.note||t.cat||'Запись'}</div><div class="txn-date">${date}</div></div>
       </div>
       <div class="txn-right">
-        <div class="txn-amt ${t.type}">${sign}${fmt(t.amount)} ${t.currency||'₽'}</div>
-        <div class="txn-cat">${t.category||''}</div>
+        <div class="txn-amt ${t.type}">${t.type==='income'?'+':'−'}${fmt(t.amount)} ₽</div>
+        <div class="txn-cat">${t.cat||''}</div>
       </div>
     </div>`;
   }).join('') : '<div style="text-align:center;padding:30px;color:#6b7280">Записей нет</div>';
 }
 
-// ============ АГЕНТЫ ============
-const colorMap = {
-  garant:{cls:'isl-joy',bar:72}, vpn:{cls:'isl-blue',bar:55},
-  moon:{cls:'isl-purple',bar:30}, content:{cls:'isl-green',bar:88}
-};
-const detailData = {
-  garant: {
-    stats:[['0 USDT','за неделю'],['0','сделок'],['3%','комиссия'],['0','арбитражей']],
-    actions:[{icon:'⚖️',name:'Открытые споры',sub:'переходи в бот'},{icon:'📋',name:'Все сделки',sub:'история и статусы'},{icon:'💰',name:'TRON кошелёк',sub:'баланс эскроу'}]
-  },
-  vpn: {
-    stats:[['0','подписок'],['0 ₽','за месяц'],['0','новых сегодня'],['0','истекают']],
-    actions:[{icon:'⚠️',name:'Истекающие скоро',sub:'3 дня до конца'},{icon:'📊',name:'Статистика',sub:'конверсия и удержание'},{icon:'🎁',name:'Промокоды',sub:'создать и управлять'}]
-  },
-  moon: {
-    stats:[['0','пользователей'],['0','расклада/день'],['⏳','оплата pending'],['—','рейтинг']],
-    actions:[{icon:'⏳',name:'Оплата на модерации',sub:'ждём одобрения Platega'},{icon:'👥',name:'Пользователи',sub:'активность и онбординг'},{icon:'🔮',name:'Расклады',sub:'за последние 24 часа'}]
-  },
-  content: {
-    stats:[['0','охват/неделя'],['0','Reels'],['0','подписчиков'],['0','ждут']],
-    actions:[{icon:'✅',name:'Одобрить контент',sub:'видео ждут тебя'},{icon:'📈',name:'Аналитика Reels',sub:'охваты и лайки'},{icon:'🎯',name:'Темы поиска',sub:'настройки Pexels'}]
+document.querySelector('.tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.tab'); if (!tab) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  activeTab = tab.dataset.filter;
+  renderTxns(S.get('txns')||[]);
+});
+
+document.getElementById('cat-filter').addEventListener('click', e => {
+  const chip = e.target.closest('.cat-chip'); if (!chip) return;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  activeCat = chip.dataset.cat;
+  renderTxns(S.get('txns')||[]);
+});
+
+document.getElementById('add-txn-btn').addEventListener('click', () => {
+  calcExpr=''; calcVal='0'; selCat=''; txnType='expense';
+  document.getElementById('f-note').value='';
+  document.querySelectorAll('.cat-item').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('btn-expense').className='type-btn sel-expense';
+  document.getElementById('btn-income').className='type-btn';
+  updateCalc();
+  showScreen('add');
+});
+document.getElementById('add-back').addEventListener('click', () => { showScreen('finance'); loadFinance(); });
+
+document.getElementById('btn-income').addEventListener('click', () => {
+  txnType='income';
+  document.getElementById('btn-income').className='type-btn sel-income';
+  document.getElementById('btn-expense').className='type-btn';
+});
+document.getElementById('btn-expense').addEventListener('click', () => {
+  txnType='expense';
+  document.getElementById('btn-expense').className='type-btn sel-expense';
+  document.getElementById('btn-income').className='type-btn';
+});
+
+document.getElementById('cat-picker').addEventListener('click', e => {
+  const item = e.target.closest('.cat-item'); if (!item) return;
+  document.querySelectorAll('.cat-item').forEach(c=>c.classList.remove('selected'));
+  item.classList.add('selected');
+  selCat = item.dataset.cat;
+});
+
+// Калькулятор
+document.querySelector('.calc-grid').addEventListener('click', e => {
+  const btn = e.target.closest('.calc-btn'); if (!btn) return;
+  if (btn.id==='calc-del') { calcVal = calcVal.length>1 ? calcVal.slice(0,-1) : '0'; }
+  else if (btn.id==='calc-eq') { calcEqual(); return; }
+  else {
+    const v = btn.dataset.v;
+    const ops = ['÷','×','−','+'];
+    if (ops.includes(v)) { calcExpr += ' '+calcVal+' '+v; calcVal=''; }
+    else if (v==='.') { if (!calcVal.includes('.')) calcVal+='.'; }
+    else { calcVal = calcVal==='0' ? v : calcVal+v; }
   }
-};
+  updateCalc();
+});
+document.getElementById('calc-eq').addEventListener('click', calcEqual);
 
-function loadAgents() {
-  const agents = defaultAgents();
-  renderIslands(agents);
-  document.getElementById('agent-count').textContent = agents.length + ' агентов · система активна';
+function calcEqual() {
+  try {
+    const expr = (calcExpr+' '+calcVal).replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').trim();
+    const res = Function('"use strict";return('+expr+')')();
+    calcVal = String(Math.round(res*100)/100);
+    calcExpr = '';
+  } catch(e) { calcExpr=''; }
+  updateCalc();
+}
+function updateCalc() {
+  document.getElementById('calc-expr').textContent = calcExpr;
+  document.getElementById('calc-result').textContent = parseFloat(calcVal||'0').toLocaleString('ru');
 }
 
-function defaultAgents() {
-  return [
-    {id:'garant',name:'Architect Garant',island:'Остров Сделок',emoji:'🤝',emotion:'Радость',status:'active',stats:{weekly_usdt:0}},
-    {id:'vpn',name:'Nord1x VPN',island:'Остров Защиты',emoji:'🔒',emotion:'Рост',status:'active',stats:{active_subs:0}},
-    {id:'moon',name:'Мун бот',island:'Остров Тайны',emoji:'🌙',emotion:'Вера',status:'pending_payment',stats:{users:0}},
-    {id:'content',name:'RelContent',island:'Остров Творчества',emoji:'🎬',emotion:'Вкус',status:'active',stats:{weekly_reach:0}},
-  ];
-}
+document.getElementById('submit-txn').addEventListener('click', () => {
+  const raw = calcExpr+' '+calcVal;
+  let amount;
+  try { amount = parseFloat(Function('"use strict";return('+(raw.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-'))+')')()) } catch(e){amount=0;}
+  if (!amount||amount<=0) { alert('Введи сумму'); return; }
+  if (!selCat) { alert('Выбери категорию'); return; }
+  const txns = S.get('txns') || [];
+  txns.unshift({ id: Date.now(), type: txnType, amount, cat: selCat, note: document.getElementById('f-note').value||null, ts: new Date().toISOString() });
+  S.set('txns', txns);
+  showScreen('finance'); loadFinance();
+});
 
-function renderIslands(agents) {
-  const container = document.getElementById('islands-container');
-  container.innerHTML = agents.map(a=>{
-    const cm = colorMap[a.id]||{cls:'isl-purple',bar:50};
-    const idle = a.status!=='active';
-    const statVal = Object.values(a.stats)[0]||0;
-    const statKey = Object.keys(a.stats)[0]||'';
-    return `<div class="island ${cm.cls}" data-id="${a.id}" data-name="${a.name}">
-      <div class="island-row1">
-        <div class="island-left">
-          <span class="island-emoji">${a.emoji}</span>
-          <div><div class="island-name">${a.name}</div><div class="island-sub">${a.island}</div></div>
-        </div>
-        <div class="dot ${idle?'idle':''}"></div>
-      </div>
-      <div class="island-row2">
-        <div><div class="island-val">${statVal}</div><div class="island-val-label">${statKey.replace(/_/g,' ')}</div></div>
-        <span class="pill">${a.emotion}</span>
-      </div>
-      <div class="bar" style="width:${cm.bar}%"></div>
-    </div>`;
-  }).join('');
+function fmt(n) { return Math.round(n||0).toLocaleString('ru'); }
 
-  container.addEventListener('click', function(e) {
-    const island = e.target.closest('.island');
-    if (island) openDetail(island.dataset.id, island.dataset.name);
+// ── ЗАМЕТКИ ──
+let currentNoteId = null;
+
+function loadNotes() {
+  const notes = S.get('notes') || [];
+  const list = document.getElementById('notes-list');
+  list.innerHTML = notes.length ? notes.map(n =>
+    `<div class="note-card" data-id="${n.id}">
+      <div class="note-card-title">${n.title || 'Без названия'}</div>
+      <div class="note-card-preview">${(n.body||'').slice(0,80)}${(n.body||'').length>80?'…':''}</div>
+      <div class="note-card-date">${new Date(n.ts).toLocaleDateString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`
+  ).join('') : '<div style="text-align:center;padding:30px;color:#6b7280">Заметок пока нет</div>';
+  list.addEventListener('click', e => {
+    const card = e.target.closest('.note-card'); if (!card) return;
+    openNote(parseInt(card.dataset.id));
   });
 }
 
-function openDetail(id, name) {
-  document.getElementById('d-title').textContent = name;
-  const d = detailData[id]||{stats:[],actions:[]};
-  document.getElementById('d-body').innerHTML = `
-    <div class="stat-grid">${d.stats.map(([v,k])=>`<div class="stat-card"><div class="sv">${v}</div><div class="sk">${k}</div></div>`).join('')}</div>
-    <div class="action-list">${d.actions.map(a=>`<div class="action-item">
-      <div class="action-left"><span class="action-icon">${a.icon}</span>
-      <div><div class="action-name">${a.name}</div><div class="action-sub">${a.sub}</div></div></div>
-      <span style="color:var(--muted);font-size:20px">›</span></div>`).join('')}</div>`;
-  showScreen('detail');
+function openNote(id) {
+  const notes = S.get('notes') || [];
+  const note = id ? notes.find(n=>n.id===id) : null;
+  currentNoteId = id || null;
+  document.getElementById('note-title').value = note ? note.title : '';
+  document.getElementById('note-body').value  = note ? note.body  : '';
+  showScreen('note-edit');
 }
 
-function goHome() { showScreen('home'); }
+document.getElementById('new-note-btn').addEventListener('click', () => openNote(null));
+document.getElementById('note-back').addEventListener('click', () => { showScreen('notes'); loadNotes(); });
 
+document.getElementById('note-save').addEventListener('click', () => {
+  const notes = S.get('notes') || [];
+  const title = document.getElementById('note-title').value.trim();
+  const body  = document.getElementById('note-body').value;
+  if (!title && !body) { showScreen('notes'); return; }
+  if (currentNoteId) {
+    const i = notes.findIndex(n=>n.id===currentNoteId);
+    if (i>=0) { notes[i].title=title; notes[i].body=body; notes[i].ts=new Date().toISOString(); }
+  } else {
+    notes.unshift({ id: Date.now(), title, body, ts: new Date().toISOString() });
+  }
+  S.set('notes', notes);
+  showScreen('notes'); loadNotes();
+});
+
+document.getElementById('note-del').addEventListener('click', () => {
+  if (!currentNoteId) { showScreen('notes'); return; }
+  if (!confirm('Удалить заметку?')) return;
+  const notes = (S.get('notes')||[]).filter(n=>n.id!==currentNoteId);
+  S.set('notes', notes);
+  showScreen('notes'); loadNotes();
+});
+
+// ── НАВИГАЦИЯ ──
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
 }
 
-function switchNav(name) {
+document.querySelector('.bottom-nav').addEventListener('click', e => {
+  const item = e.target.closest('.nav-item'); if (!item) return;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('nav-'+name)?.classList.add('active');
-  showScreen(name);
-  if (name==='finance') loadFinance();
-}
+  item.classList.add('active');
+  const screen = item.dataset.screen;
+  showScreen(screen);
+  if (screen==='finance') loadFinance();
+  if (screen==='notes') loadNotes();
+  if (screen==='home') renderIslands();
+});
 
-loadAgents();
+// ── СТАРТ ──
+renderIslands();
 </script>
 </body>
 </html>
