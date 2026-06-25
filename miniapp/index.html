@@ -201,15 +201,30 @@ h1{font-size:18px;font-weight:700;}
   </div>
 </div>
 
-<!-- ПЛАНЫ -->
+<!-- ПЛАНЫ + ПРИВЫЧКИ -->
 <div class="screen" id="s-plans">
-  <div class="hdr"><div><h1>Планы</h1><div class="sub">Сегодня · Завтра · Неделя</div></div><button class="bic" id="plan-add-btn">＋</button></div>
-  <div class="tabs" id="plan-tabs">
-    <div class="tab active" data-day="today">Сегодня</div>
-    <div class="tab" data-day="tomorrow">Завтра</div>
-    <div class="tab" data-day="week">Неделя</div>
+  <div class="hdr">
+    <div><h1 id="plans-title">Планы</h1><div class="sub" id="plans-sub">Сегодня · Завтра · Неделя</div></div>
+    <button class="bic" id="plan-add-btn">＋</button>
   </div>
-  <div style="padding:10px 16px;display:flex;flex-direction:column;gap:8px" id="plan-list"></div>
+  <!-- Верхние табы: Задачи / Привычки -->
+  <div style="display:flex;margin:10px 16px 0;background:var(--bg2);border-radius:12px;padding:3px" id="plans-mode-tabs">
+    <div class="tab active" data-mode="tasks" style="flex:1">✅ Задачи</div>
+    <div class="tab" data-mode="habits" style="flex:1">🔥 Привычки</div>
+  </div>
+  <!-- Задачи: подтабы -->
+  <div id="plans-tasks-wrap">
+    <div class="tabs" id="plan-tabs">
+      <div class="tab active" data-day="today">Сегодня</div>
+      <div class="tab" data-day="tomorrow">Завтра</div>
+      <div class="tab" data-day="week">Неделя</div>
+    </div>
+    <div style="padding:10px 16px;display:flex;flex-direction:column;gap:8px" id="plan-list"></div>
+  </div>
+  <!-- Привычки встроенные -->
+  <div id="plans-habits-wrap" style="display:none">
+    <div id="hab-list" style="padding-top:6px"></div>
+  </div>
 </div>
 
 <!-- ФОРМА ЗАДАЧИ -->
@@ -633,13 +648,30 @@ function renderPlans() {
   });
 }
 
+// Переключатель Задачи / Привычки
+var plansMode = 'tasks';
+$('plans-mode-tabs').addEventListener('click', function(e) {
+  var t = e.target.closest('.tab'); if (!t || !t.dataset.mode) return;
+  plansMode = t.dataset.mode;
+  $('plans-mode-tabs').querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.dataset.mode===plansMode); });
+  $('plans-tasks-wrap').style.display = plansMode==='tasks' ? '' : 'none';
+  $('plans-habits-wrap').style.display = plansMode==='habits' ? '' : 'none';
+  $('plans-title').textContent = plansMode==='tasks' ? 'Планы' : 'Привычки';
+  $('plans-sub').textContent = plansMode==='tasks' ? 'Сегодня · Завтра · Неделя' : 'Ежедневный трекер';
+  $('plan-add-btn').textContent = plansMode==='tasks' ? '＋' : '＋';
+  if (plansMode==='habits') renderHabits();
+});
+
 $('plan-tabs').addEventListener('click', function(e) {
-  var t = e.target.closest('.tab'); if (!t) return;
+  var t = e.target.closest('.tab'); if (!t || !t.dataset.day) return;
   planDay = t.dataset.day;
   $('plan-tabs').querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active',x.dataset.day===planDay); });
   renderPlans();
 });
-$('plan-add-btn').addEventListener('click', function(){ setPlanDayUI(newPlanDay); goScreen('s-plan-add'); });
+$('plan-add-btn').addEventListener('click', function(){
+  if (plansMode==='habits') { goScreen('s-hab-add'); return; }
+  setPlanDayUI(newPlanDay); goScreen('s-plan-add');
+});
 $('pa-back').addEventListener('click', function(){goScreen('s-plans');});
 
 $('pd-row').addEventListener('click', function(e) {
