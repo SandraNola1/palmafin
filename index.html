@@ -223,7 +223,7 @@ h1{font-size:18px;font-weight:700;}
   </div>
   <!-- Привычки встроенные -->
   <div id="plans-habits-wrap" style="display:none">
-    <div id="hab-list" style="padding-top:6px"></div>
+    <div id="hab-list-plans" style="padding-top:6px"></div>
   </div>
 </div>
 
@@ -381,7 +381,8 @@ function goScreen(id) {
   if (id === 's-projects') renderProjects();
   if (id === 's-finance') renderFinance();
   if (id === 's-plans') renderPlans();
-  if (id === 's-habits') renderHabits();
+  if (id === 's-habits') renderHabits('hab-list');
+  if (id === 's-plans' && plansMode==='habits') renderHabits('hab-list-plans');
   if (id === 's-dreams') renderDreams();
 }
 
@@ -659,7 +660,7 @@ $('plans-mode-tabs').addEventListener('click', function(e) {
   $('plans-title').textContent = plansMode==='tasks' ? 'Планы' : 'Привычки';
   $('plans-sub').textContent = plansMode==='tasks' ? 'Сегодня · Завтра · Неделя' : 'Ежедневный трекер';
   $('plan-add-btn').textContent = plansMode==='tasks' ? '＋' : '＋';
-  if (plansMode==='habits') renderHabits();
+  if (plansMode==='habits') renderHabits('hab-list-plans');
 });
 
 $('plan-tabs').addEventListener('click', function(e) {
@@ -696,8 +697,10 @@ $('pa-save').addEventListener('click', function() {
 
 // ── ПРИВЫЧКИ ──
 var WD = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-function renderHabits() {
-  var habits = DB.g('habits')||[], el = $('hab-list');
+function renderHabits(targetId) {
+  var elId = targetId || 'hab-list';
+  var habits = DB.g('habits')||[], el = $(elId);
+  if (!el) return;
   if (!habits.length) { el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">Нет привычек</div>'; return; }
   var today=new Date(), dow=today.getDay(), tk=tkey();
   var week=[]; for(var i=0;i<7;i++){var d=new Date(today);d.setDate(today.getDate()-((dow||7)-1)+i);week.push(d);}
@@ -730,7 +733,7 @@ function calcStreak(log) {
   return s;
 }
 $('hab-add-btn').addEventListener('click',function(){goScreen('s-hab-add');});
-$('ha-back').addEventListener('click',function(){goScreen('s-habits');});
+$('ha-back').addEventListener('click',function(){goScreen('s-plans');});
 $('ha-save').addEventListener('click',function(){
   var name=$('ha-name').value.trim();if(!name){toast('Введи название');return;}
   var habits=DB.g('habits')||[];
