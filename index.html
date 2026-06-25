@@ -272,12 +272,29 @@ h1{font-size:18px;font-weight:700;}
 
 <div class="toast" id="toast"></div>
 
+<!-- ЗАМЕТКИ -->
+<div class="screen" id="s-notes">
+  <div class="hdr"><div><h1>Заметки</h1><div class="sub">Идеи, планы, мысли</div></div><button class="bic" id="note-add-btn">＋</button></div>
+  <div id="note-list" style="padding:10px 16px;display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
+<!-- РЕДАКТОР ЗАМЕТКИ -->
+<div class="screen" id="s-note-edit">
+  <div class="dhdr">
+    <button class="bbk" id="note-back">←</button>
+    <button class="btn" id="note-save-btn" style="width:auto;padding:8px 16px;margin:0;font-size:13px">Сохранить</button>
+    <button class="bic" id="note-del-btn" style="margin-left:auto">🗑</button>
+  </div>
+  <input class="inp" id="note-title" placeholder="Заголовок..." style="border-radius:0;border-left:none;border-right:none;border-top:none;background:transparent;font-size:17px;font-weight:600;padding:14px 16px">
+  <textarea class="inp" id="note-body" placeholder="Пиши что угодно..." style="border:none;background:transparent;min-height:400px;padding:14px 16px;font-size:15px;line-height:1.6"></textarea>
+</div>
+
 <nav class="nav">
   <div class="ni active" data-s="s-home"><span class="nic">🏠</span><span>Главная</span></div>
   <div class="ni" data-s="s-projects"><span class="nic">🚀</span><span>Проекты</span></div>
   <div class="ni" data-s="s-finance"><span class="nic">💰</span><span>Финансы</span></div>
   <div class="ni" data-s="s-plans"><span class="nic">✅</span><span>Планы</span></div>
-  <div class="ni" data-s="s-habits"><span class="nic">🔥</span><span>Привычки</span></div>
+  <div class="ni" data-s="s-notes"><span class="nic">📝</span><span>Заметки</span></div>
 </nav>
 
 <script>
@@ -739,6 +756,76 @@ $('da-save').addEventListener('click',function(){
 function findIdx(arr,id){for(var i=0;i<arr.length;i++){if(arr[i].id===id)return i;}return -1;}
 function findItem(arr,id){for(var i=0;i<arr.length;i++){if(arr[i].id===id)return arr[i];}return null;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── ЗАМЕТКИ ──
+var editNoteId = null;
+function renderNotes() {
+  var notes = DB.g('notes')||[], el = $('note-list');
+  if (!notes.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Нет заметок — добавь первую</div><div class="add-row" id="note-add-empty">＋ Новая заметка</div>'; $('note-add-empty') && $('note-add-empty').addEventListener('click',function(){openNoteEdit(null);}); return; }
+  el.innerHTML = notes.map(function(n){
+    var prev = (n.body||'').slice(0,80) + ((n.body||'').length>80?'…':'');
+    var dt = new Date(n.ts).toLocaleDateString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return '<div style="background:var(--bg2);border:.5px solid var(--br);border-radius:16px;padding:14px 16px;cursor:pointer" data-nid="'+n.id+'">' +
+      '<div style="font-size:14px;font-weight:600;margin-bottom:4px">'+esc(n.title||'Без названия')+'</div>' +
+      (prev?'<div style="font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:6px">'+esc(prev)+'</div>':'')+
+      '<div style="font-size:11px;color:var(--hint)">'+dt+'</div></div>';
+  }).join('');
+  el.querySelectorAll('[data-nid]').forEach(function(c){
+    c.addEventListener('click',function(){ openNoteEdit(parseInt(c.dataset.nid)); });
+  });
+}
+function openNoteEdit(id) {
+  editNoteId = id;
+  var n = id ? findItem(DB.g('notes')||[], id) : null;
+  $('note-title').value = n ? n.title : '';
+  $('note-body').value  = n ? n.body  : '';
+  goScreen('s-note-edit');
+}
+$('note-add-btn').addEventListener('click', function(){ openNoteEdit(null); });
+$('note-back').addEventListener('click', function(){ goScreen('s-notes'); renderNotes(); });
+$('note-save-btn').addEventListener('click', function(){
+  var title = $('note-title').value.trim(), body = $('note-body').value;
+  if (!title && !body) { goScreen('s-notes'); return; }
+  var notes = DB.g('notes')||[];
+  var note = {id: editNoteId||Date.now(), title:title, body:body, ts:new Date().toISOString()};
+  if (editNoteId) { var i=findIdx(notes,editNoteId); if(i>=0)notes[i]=note; } else notes.unshift(note);
+  DB.s('notes', notes); toast('Сохранено ✓');
+  goScreen('s-notes'); renderNotes();
+});
+$('note-del-btn').addEventListener('click', function(){
+  if (!editNoteId) { goScreen('s-notes'); return; }
+  DB.s('notes',(DB.g('notes')||[]).filter(function(n){return n.id!==editNoteId;}));
+  toast('Удалено'); goScreen('s-notes'); renderNotes();
+});
+
+// renderNotes hook into goScreen
+var _goScreen = goScreen;
+goScreen = function(id) {
+  _goScreen(id);
+  if (id === 's-notes') renderNotes();
+};
+
+// ── МИГРАЦИЯ старых ключей ──
+(function migrate(){
+  var OLD = ['pf2_','pf3_','pf_old_'];
+  var KEYS = ['txns','projects','habits','plans_today','plans_tomorrow','plans_week','dreams','notes','xp'];
+  OLD.forEach(function(pfx){
+    KEYS.forEach(function(k){
+      var old = localStorage.getItem(pfx+k);
+      if (old && !localStorage.getItem('pf_'+k)) {
+        localStorage.setItem('pf_'+k, old);
+      }
+    });
+    // migrate hlog_ keys
+    for (var i=0; i<localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf(pfx+'hlog_')===0) {
+        var newKey = 'pf_' + key.slice(pfx.length);
+        if (!localStorage.getItem(newKey)) localStorage.setItem(newKey, localStorage.getItem(key));
+      }
+    }
+  });
+})();
 
 // ── СТАРТ ──
 renderHome();
