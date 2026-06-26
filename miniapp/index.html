@@ -546,12 +546,25 @@ function renderFinance() {
   // Транзакции
   var filtered = activeFin==='all' ? txns : txns.filter(function(t){return t.finCat===activeFin;});
   var tl = $('fin-txns');
-  tl.innerHTML = filtered.length ? filtered.map(function(t) {
+  if (!filtered.length) { tl.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">Записей нет</div>'; return; }
+  tl.innerHTML = filtered.map(function(t) {
     var cat = FCATS.filter(function(c){return c.id===t.finCat;})[0];
     var ico = cat ? cat.ico : '💳';
     var dt = new Date(t.ts).toLocaleDateString('ru',{day:'numeric',month:'short'});
-    return '<div class="txn"><div class="txl"><span class="txic">'+ico+'</span><div><div class="txnm">'+esc(t.note||t.subCat||t.finCat||'Запись')+'</div><div class="txdt">'+dt+(t.subCat?' · '+t.subCat:'')+'</div></div></div><div class="txamt '+(t.type==='income'?'inc':'exp')+'">'+(t.type==='income'?'+':'−')+fmt(t.amount)+' ₽</div></div>';
-  }).join('') : '<div style="text-align:center;padding:30px;color:var(--muted)">Записей нет</div>';
+    return '<div class="txn" data-tid="'+t.id+'">' +
+      '<div class="txl"><span class="txic">'+ico+'</span><div><div class="txnm">'+esc(t.note||t.subCat||t.finCat||'Запись')+'</div><div class="txdt">'+dt+(t.subCat?' · '+t.subCat:'')+'</div></div></div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+      '<div class="txamt '+(t.type==='income'?'inc':'exp')+'">'+(t.type==='income'?'+':'−')+fmt(t.amount)+' ₽</div>' +
+      '<button style="background:none;border:none;font-size:14px;color:var(--red);cursor:pointer;padding:4px 2px" data-del="'+t.id+'">✕</button>' +
+      '</div></div>';
+  }).join('');
+  tl.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-del]'); if (!btn) return;
+    var id = parseInt(btn.dataset.del);
+    DB.s('txns', (DB.g('txns')||[]).filter(function(x){return x.id!==id;}));
+    toast('Запись удалена');
+    renderFinance();
+  });
 }
 
 $('fin-cats').addEventListener('click', function(e) {
