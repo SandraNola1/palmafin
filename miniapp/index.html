@@ -380,7 +380,7 @@ function goScreen(id) {
   if (id === 's-home') renderHome();
   if (id === 's-projects') renderProjects();
   if (id === 's-finance') renderFinance();
-  if (id === 's-plans') renderPlans();
+  if (id === 's-plans') { updatePlanTabLabels(); renderPlans(); }
   if (id === 's-habits') renderHabits('hab-list');
   if (id === 's-plans' && plansMode==='habits') renderHabits('hab-list-plans');
   if (id === 's-dreams') renderDreams();
@@ -406,7 +406,7 @@ function renderHome() {
   $('hs-proj').textContent = projs.filter(function(p){return p.status==='active';}).length + ' / ' + projs.filter(function(p){return p.status==='idea';}).length;
   var habits = DB.g('habits')||[], tk = tkey();
   $('hs-hab').textContent = habits.filter(function(h){return (DB.g('hlog_'+h.id)||{})[tk];}).length + '/' + habits.length;
-  var plans = DB.g('plans_today')||[];
+  var plans = DB.g('plans_'+dateKey(0))||[];
   $('hs-plan').textContent = plans.filter(function(p){return p.done;}).length + '/' + plans.length;
   // задачи
   var wrap = $('home-tasks'); wrap.innerHTML = '';
@@ -416,8 +416,9 @@ function renderHome() {
     d.style.marginBottom = '8px';
     d.innerHTML = '<div class="pcb '+(p.done?'chk':'')+'">'+(p.done?'✓':'')+'</div><span class="ptxt '+(p.done?'done':'')+'">'+esc(p.text)+'</span>';
     d.addEventListener('click', function() {
-      var all = DB.g('plans_today')||[], idx = findIdx(all, p.id);
-      if (idx >= 0) { if (!all[idx].done) addXP(10); all[idx].done = !all[idx].done; DB.s('plans_today', all); }
+      var k = 'plans_'+dateKey(0);
+      var all = DB.g(k)||[], idx = findIdx(all, p.id);
+      if (idx >= 0) { if (!all[idx].done) addXP(10); all[idx].done = !all[idx].done; DB.s(k, all); }
       renderHome();
     });
     wrap.appendChild(d);
@@ -625,9 +626,58 @@ $('fa-save').addEventListener('click', function() {
 });
 
 // ── ПЛАНЫ ──
+// Реальные ключи по дате: plans_2026-6-26
+function dateKey(offset) {
+  var d = new Date(); d.setDate(d.getDate() + (offset||0));
+  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+}
+function dayLabel(offset) {
+  var d = new Date(); d.setDate(d.getDate() + (offset||0));
+  var names = ['вс','пн','вт','ср','чт','пт','сб'];
+  return d.getDate()+' '+['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'][d.getMonth()]+' ('+names[d.getDay()]+')';
+}
+
+// Автоперенос: при запуске проверяем последний открытый день
+function autoShiftPlans() {
+  var lastKey = DB.g('last_day');
+  var todayKey = dateKey(0);
+  if (!lastKey || lastKey === todayKey) { DB.s('last_day', todayKey); return; }
+  // Был другой день — переносим незавершённые задачи из old today в new today
+  var oldToday = DB.g('plans_'+lastKey)||[];
+  var unfinished = oldToday.filter(function(p){ return !p.done; });
+  if (unfinished.length) {
+    var newToday = DB.g('plans_'+todayKey)||[];
+    unfinished.forEach(function(p){ p.ts = new Date().toISOString(); });
+    DB.s('plans_'+todayKey, newToday.concat(unfinished));
+  }
+  DB.s('last_day', todayKey);
+}
+
+function updatePlanTabLabels() {
+  var tabs = $('plan-tabs').querySelectorAll('.tab');
+  var labels = [
+    {day:'today',    prefix:'Сегодня',  lbl:dayLabel(0)},
+    {day:'tomorrow', prefix:'Завтра',   lbl:dayLabel(1)},
+    {day:'week',     prefix:'Неделя',   lbl:'7 дней'},
+  ];
+  tabs.forEach(function(t, i) {
+    t.innerHTML = '<span style="display:block;font-size:12px">'+(i===0?'Сегодня':i===1?'Завтра':'Неделя')+'</span><span style="font-size:10px;color:var(--muted)">'+dayLabel(i<2?i:0)+'</span>';
+    if (i===2) t.innerHTML = '<span style="display:block;font-size:12px">Неделя</span><span style="font-size:10px;color:var(--muted)">7 дней</span>';
+  });
+}
+
 var planDay = 'today', newPlanDay = 'today';
+
+// Получить реальный ключ для таба
+function planKey(day) {
+  if (day==='today')    return dateKey(0);
+  if (day==='tomorrow') return dateKey(1);
+  return 'week'; // неделя — отдельный список
+}
+
 function renderPlans() {
-  var plans = DB.g('plans_'+planDay)||[];
+  var key = planKey(planDay);
+  var plans = DB.g('plans_'+key)||[];
   var el = $('plan-list'); el.innerHTML = '';
   if (!plans.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Задач нет — добавь первую</div>'; return; }
   plans.forEach(function(p) {
@@ -638,11 +688,11 @@ function renderPlans() {
       '<button style="background:none;border:none;font-size:14px;color:var(--red);cursor:pointer;padding:4px" data-del="'+p.id+'">✕</button>';
     d.addEventListener('click', function(e) {
       if (e.target.dataset.del) {
-        DB.s('plans_'+planDay, (DB.g('plans_'+planDay)||[]).filter(function(x){return x.id!==p.id;}));
+        DB.s('plans_'+key, (DB.g('plans_'+key)||[]).filter(function(x){return x.id!==p.id;}));
         renderPlans(); return;
       }
-      var all = DB.g('plans_'+planDay)||[], idx = findIdx(all, p.id);
-      if (idx>=0) { if (!all[idx].done) addXP(10); all[idx].done=!all[idx].done; DB.s('plans_'+planDay,all); }
+      var all = DB.g('plans_'+key)||[], idx = findIdx(all, p.id);
+      if (idx>=0) { if (!all[idx].done) addXP(10); all[idx].done=!all[idx].done; DB.s('plans_'+key,all); }
       renderPlans();
     });
     el.appendChild(d);
@@ -685,13 +735,14 @@ function setPlanDayUI(d) {
 
 $('pa-save').addEventListener('click', function() {
   var text = $('pa-text').value.trim(); if (!text) { toast('Введи задачу'); return; }
-  var plans = DB.g('plans_'+newPlanDay)||[];
+  var key = planKey(newPlanDay);
+  var plans = DB.g('plans_'+key)||[];
   plans.push({id:Date.now(),text:text,note:$('pa-note').value||null,done:false,ts:new Date().toISOString()});
-  DB.s('plans_'+newPlanDay,plans);
+  DB.s('plans_'+key, plans);
   $('pa-text').value=''; $('pa-note').value='';
   planDay = newPlanDay;
   $('plan-tabs').querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active',x.dataset.day===planDay); });
-  toast('+10 XP ⚡'); addXP(0);
+  toast('+10 XP ⚡'); addXP(10);
   goScreen('s-plans');
 });
 
@@ -863,6 +914,7 @@ goScreen = function(id) {
 })();
 
 // ── СТАРТ ──
+autoShiftPlans();
 renderHome();
 </script>
 </body>
